@@ -16,6 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final Color primaryColors = Color.fromARGB(255, 0, 140, 255);
   String? _username, _password;
   DataUser? _dataUser;
   void _loginProcess(userData) async {
@@ -137,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.green[300]!,
+        backgroundColor: primaryColors,
         body: SafeArea(
           child: Stack(
             children: [
@@ -184,7 +185,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: Text(
                             'LOGIN',
                             style: TextStyle(
-                              color: Colors.green[400],
+                              color: primaryColors,
                               letterSpacing: 1.5,
                               fontSize: 18.0,
                               fontWeight: FontWeight.bold,

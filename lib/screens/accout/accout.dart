@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -17,6 +19,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AccoutScreen extends StatefulWidget {
   const AccoutScreen({Key? key}) : super(key: key);
@@ -26,6 +29,7 @@ class AccoutScreen extends StatefulWidget {
 }
 
 class _AccoutScreenState extends State<AccoutScreen> {
+  final Color primaryColors = Color.fromARGB(255, 0, 140, 255);
   DataUser? _dataUser;
   String? username;
   String? password;
@@ -50,7 +54,8 @@ class _AccoutScreenState extends State<AccoutScreen> {
 
   upload(filePath) async {
     try {
-      final postUri = Uri.parse('https://sttslife-api.sttslife.co/upload-image/${iduser}');
+      final postUri =
+          Uri.parse('https://sttslife-api.sttslife.co/upload-image/${iduser}');
       setState(() {
         name_flie = filePath.split('/').last;
       });
@@ -167,7 +172,10 @@ class _AccoutScreenState extends State<AccoutScreen> {
                         Center(
                           child: Text(
                             'ข้อมูลผู้ใช้',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.green[400]),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: primaryColors),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -222,7 +230,8 @@ class _AccoutScreenState extends State<AccoutScreen> {
                                   height: 130,
                                   width: 130,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, exception, stackTrace) {
+                                  errorBuilder:
+                                      (context, exception, stackTrace) {
                                     return Image.asset(
                                       'assets/images/logo.png',
                                       fit: BoxFit.cover,
@@ -243,9 +252,10 @@ class _AccoutScreenState extends State<AccoutScreen> {
                                       shape: BoxShape.circle,
                                       border: Border.all(
                                         width: 4,
-                                        color: Theme.of(context).scaffoldBackgroundColor,
+                                        color: Theme.of(context)
+                                            .scaffoldBackgroundColor,
                                       ),
-                                      color: Colors.green,
+                                      color: primaryColors,
                                     ),
                                     child: InkWell(
                                       onTap: () {
@@ -253,8 +263,10 @@ class _AccoutScreenState extends State<AccoutScreen> {
 
                                         showCupertinoModalPopup(
                                           context: context,
-                                          builder: (context) => CupertinoActionSheet(
-                                            title: Text("เลือกรายการที่ต้องการ"),
+                                          builder: (context) =>
+                                              CupertinoActionSheet(
+                                            title:
+                                                Text("เลือกรายการที่ต้องการ"),
                                             actions: [
                                               CupertinoActionSheetAction(
                                                 onPressed: () {
@@ -301,17 +313,21 @@ class _AccoutScreenState extends State<AccoutScreen> {
                             FlatButton(
                                 onPressed: () {
                                   print('เปลี่ยนรหัสผ่าน');
-                                  Navigator.push(context, MaterialPageRoute(builder: (context) => EditPassword()));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              EditPassword()));
                                 },
                                 child: Text(
                                   'เปลี่ยนรหัสผ่าน',
-                                  style: TextStyle(color: Colors.green[400]),
+                                  style: TextStyle(color: primaryColors),
                                 )),
                           ],
                         ),
                         Divider(
                           thickness: 0.4,
-                          color: Colors.green[400],
+                          color: primaryColors,
                         ),
                         const SizedBox(height: 10),
                         // Container(
@@ -324,9 +340,10 @@ class _AccoutScreenState extends State<AccoutScreen> {
                         //   ),
                         // ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                              color: Colors.green[400],
+                              color: primaryColors,
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(20),
                                 bottomRight: Radius.circular(20),
@@ -372,9 +389,10 @@ class _AccoutScreenState extends State<AccoutScreen> {
                         //   ),
                         // ),
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
-                              color: Colors.green[400],
+                              color: primaryColors,
                               borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(20),
                                 bottomRight: Radius.circular(20),
@@ -424,7 +442,8 @@ class _AccoutScreenState extends State<AccoutScreen> {
                           title: Text('วันเริ่มประกัน'),
                           subtitle: Text(
                             f.format(
-                              DateTime.parse('${_dataUser?.message?[0].userStartwaranty}'),
+                              DateTime.parse(
+                                  '${_dataUser?.message?[0].userStartwaranty}'),
                             ),
                           ),
                         ),
@@ -445,11 +464,14 @@ class _AccoutScreenState extends State<AccoutScreen> {
                           title: Text('วันหมดประกัน'),
                           subtitle: Text(
                             f.format(
-                              DateTime.parse('${_dataUser?.message?[0].userEndwaranty}'),
+                              DateTime.parse(
+                                  '${_dataUser?.message?[0].userEndwaranty}'),
                             ),
                           ),
                           trailing: Text(
-                            getDataTime() <= 0 ? 'หมดประกันแล้ว' : 'จะหมดอายุอีก : ${getDataTime()} วัน',
+                            getDataTime() <= 0
+                                ? 'หมดประกันแล้ว'
+                                : 'จะหมดอายุอีก : ${getDataTime()} วัน',
                             style: TextStyle(color: Colors.black54),
                           ),
                         ),
@@ -457,20 +479,45 @@ class _AccoutScreenState extends State<AccoutScreen> {
                           title: Text('วันที่ล้างแอร์ครั้งสุดท้าย'),
                           subtitle: Text(
                             '${f.format(
-                              DateTime.parse('${_dataUser?.message?[0].userCleanair}'),
+                              DateTime.parse(
+                                  '${_dataUser?.message?[0].userCleanair}'),
                             )}',
                           ),
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(right: 10.0),
+                              child: RaisedButton(
+                                onPressed: _launchUrl,
+                                color: Colors.green,
+                                padding: EdgeInsets.symmetric(horizontal: 30),
+                                elevation: 2,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                child: Text(
+                                  "ติดต่อเรา",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      letterSpacing: 2.2,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         Divider(
                           thickness: 0.4,
-                          color: Colors.green[400],
+                          color: primaryColors,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             OutlineButton(
                               padding: EdgeInsets.symmetric(horizontal: 30),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               onPressed: () async {
                                 // SharedPreferences sharedPreferences =
                                 //     await SharedPreferences.getInstance();
@@ -483,23 +530,35 @@ class _AccoutScreenState extends State<AccoutScreen> {
                                 // print('logout');
                                 showAlertDialog(context);
                               },
-                              child: Text("Logout", style: TextStyle(fontSize: 14, letterSpacing: 2.2, color: Colors.black)),
+                              child: Text("Logout",
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      letterSpacing: 2.2,
+                                      color: Colors.black)),
                             ),
                             RaisedButton(
                               onPressed: () async {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => EditAccoutScreen()));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            EditAccoutScreen()));
                                 // Navigator.pushNamed(
                                 //     context, '/editaccout');
                                 // // loginUser(userData);
                                 print('editprofile');
                               },
-                              color: Colors.green,
+                              color: primaryColors,
                               padding: EdgeInsets.symmetric(horizontal: 30),
                               elevation: 2,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
                               child: Text(
                                 "Edit Profile",
-                                style: TextStyle(fontSize: 14, letterSpacing: 2.2, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    letterSpacing: 2.2,
+                                    color: Colors.white),
                               ),
                             )
                           ],
@@ -524,6 +583,17 @@ class _AccoutScreenState extends State<AccoutScreen> {
     }
   }
 
+  void _launchUrl() async {
+    // if (!await launchUrl(_url)) throw 'Could not launch $_url';
+
+    const url = 'https://line.me/R/ti/p/@469iogbl';
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
@@ -535,7 +605,8 @@ class _AccoutScreenState extends State<AccoutScreen> {
     Widget continueButton = FlatButton(
       child: Text("ยืนยัน"),
       onPressed: () async {
-        SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        SharedPreferences sharedPreferences =
+            await SharedPreferences.getInstance();
         sharedPreferences.remove('test_image');
         sharedPreferences.remove('userId');
         sharedPreferences.remove('user_modes');

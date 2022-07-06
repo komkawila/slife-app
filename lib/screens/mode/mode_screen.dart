@@ -18,6 +18,7 @@ class ModeScreen extends StatefulWidget {
 }
 
 class _ModeScreenState extends State<ModeScreen> {
+  final Color primaryColors = Color.fromARGB(255, 0, 140, 255);
   DataModes? _dataModes;
   List<Message> _dataModesList = [];
   Socket? socket;
@@ -35,7 +36,8 @@ class _ModeScreenState extends State<ModeScreen> {
     iduser = prefs.getString('userId');
     // user_modes = prefs.getString('user_modes');
     print('iduser = ${iduser}');
-    var res = await http.get(Uri.parse('https://sttslife-api.sttslife.co/config/' + iduser.toString()));
+    var res = await http.get(Uri.parse(
+        'https://sttslife-api.sttslife.co/config/' + iduser.toString()));
 
     try {
       if (res.statusCode == 200)
@@ -53,7 +55,8 @@ class _ModeScreenState extends State<ModeScreen> {
   }
 
   getUser(id) async {
-    var res = await http.get(Uri.parse('https://sttslife-api.sttslife.co/users/' + id.toString()));
+    var res = await http.get(
+        Uri.parse('https://sttslife-api.sttslife.co/users/' + id.toString()));
     final indexuser_modes = res.body.indexOf('user_modes');
     final index_user_modes = res.body.indexOf(':', indexuser_modes + 5) + 1;
     final indexEnduser_modes = res.body.indexOf(',', index_user_modes);
@@ -93,18 +96,25 @@ class _ModeScreenState extends State<ModeScreen> {
 
   @override
   void dispose() {
-    socket!.disconnect(); // --> disconnects the Socket.IO client once the screen is disposed
+    socket!
+        .disconnect(); // --> disconnects the Socket.IO client once the screen is disposed
     super.dispose();
     _timer?.cancel();
   }
 
   sendMessage(String message) {
-    socket!.emit("newChatMessage", {'body': '${message}', 'senderId': socket!.id});
+    socket!
+        .emit("newChatMessage", {'body': '${message}', 'senderId': socket!.id});
   }
 
   void initializeSocket() {
-    socket =
-        io('http://dns.sttslife.co:4000/', OptionBuilder().setTransports(['websocket']).disableAutoConnect().setQuery({"roomId": iduser}).build());
+    socket = io(
+        'http://dns.sttslife.co:4000/',
+        OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .setQuery({"roomId": iduser})
+            .build());
     socket!.connect(); //connect the Socket.IO Client to the Serverƒ
     //SOCKET EVENTS
     // --> listening for connection
@@ -135,8 +145,10 @@ class _ModeScreenState extends State<ModeScreen> {
         final str = data.toString();
         final commands = str.substring(str.indexOf(':') + 2, str.indexOf(','));
         final atcommands = commands.substring(0, commands.indexOf('='));
-        final config_id = commands.substring(commands.indexOf('=') + 1, commands.indexOf('|'));
-        final values = commands.substring(commands.indexOf('|') + 1, commands.length);
+        final config_id = commands.substring(
+            commands.indexOf('=') + 1, commands.indexOf('|'));
+        final values =
+            commands.substring(commands.indexOf('|') + 1, commands.length);
         // if (atcommands.indexOf('AT+TOGGLE') != -1) {
         //   setState(() {
         //     status = (int.parse(values) == 0 ? false : true);
@@ -227,62 +239,65 @@ class _ModeScreenState extends State<ModeScreen> {
             Center(
               child: Text(
                 'Mode ควบคุมการทำงาน',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green[400]),
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: primaryColors),
               ),
             ),
             SizedBox(
               height: 15,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('ระดับความชอบอากาศร้อน'),
-                RatingBar.builder(
-                  itemSize: 24,
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 15,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('ระดับความชอบอากาศหนาว'),
-                RatingBar.builder(
-                  itemSize: 24,
-                  initialRating: 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: true,
-                  itemCount: 5,
-                  itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                  itemBuilder: (context, _) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
-                  ),
-                  onRatingUpdate: (rating) {
-                    print(rating);
-                  },
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 30,
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Text('ระดับความชอบอากาศร้อน'),
+            //     RatingBar.builder(
+            //       itemSize: 24,
+            //       initialRating: 3,
+            //       minRating: 1,
+            //       direction: Axis.horizontal,
+            //       allowHalfRating: true,
+            //       itemCount: 5,
+            //       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            //       itemBuilder: (context, _) => Icon(
+            //         Icons.star,
+            //         color: Colors.amber,
+            //       ),
+            //       onRatingUpdate: (rating) {
+            //         print(rating);
+            //       },
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(
+            //   height: 15,
+            // ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.center,
+            //   children: [
+            //     Text('ระดับความชอบอากาศหนาว'),
+            //     RatingBar.builder(
+            //       itemSize: 24,
+            //       initialRating: 3,
+            //       minRating: 1,
+            //       direction: Axis.horizontal,
+            //       allowHalfRating: true,
+            //       itemCount: 5,
+            //       itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+            //       itemBuilder: (context, _) => Icon(
+            //         Icons.star,
+            //         color: Colors.amber,
+            //       ),
+            //       onRatingUpdate: (rating) {
+            //         print(rating);
+            //       },
+            //     ),
+            //   ],
+            // ),
+            // SizedBox(
+            //   height: 30,
+            // ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -291,21 +306,27 @@ class _ModeScreenState extends State<ModeScreen> {
                   child: GridView.builder(
                       itemCount: _dataModesList.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          childAspectRatio: MediaQuery.of(context).size.width / (MediaQuery.of(context).size.height / 2.4), crossAxisCount: 2),
+                          childAspectRatio: MediaQuery.of(context).size.width /
+                              (MediaQuery.of(context).size.height / 2.4),
+                          crossAxisCount: 2),
                       itemBuilder: (context, index) {
                         bool checked = index == checkedIndex;
                         return InkWell(
                           onTap: () async {
-                            SharedPreferences prefs = await SharedPreferences.getInstance();
-                            print('ตั้งค่าโหมดเป็น: #RT=${_dataModesList[index].configId}\$');
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            print(
+                                'ตั้งค่าโหมดเป็น: #RT=${_dataModesList[index].configId}\$');
                             // sendMessage(
                             //     '#RT=${_dataModesList[index].configId}\$');
-                            sendMessage('AT+MODE=${_dataModesList[index].configId}|${index}');
+                            sendMessage(
+                                'AT+MODE=${_dataModesList[index].configId}|${index}');
                             sendUserMode(_dataModesList[index].configId);
                             //////put api
                             ///
                             setState(() {
-                              _Textmode = _dataModesList[index].configName.toString();
+                              _Textmode =
+                                  _dataModesList[index].configName.toString();
                               checkedIndex = index;
                               // prefs.setString(
                               //     'user_modes', index.toString());
@@ -315,17 +336,25 @@ class _ModeScreenState extends State<ModeScreen> {
                           child: Card(
                             elevation: 4,
                             // color: Colors.green[50],
-                            color: checked ? Colors.green[400] : Colors.white,
+                            color: checked
+                                ? primaryColors
+                                : Color.fromARGB(255, 206, 243, 250),
+                            // color: checked ? primaryColors : Colors.white,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                Text(
-                                  'Mode',
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-                                ),
+                                // Text(
+                                //   'Mode',
+                                //   style: TextStyle(
+                                //       fontSize: 14,
+                                //       fontWeight: FontWeight.w600),
+                                // ),
                                 Text(
                                   '${_dataModesList[index].configName}',
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color.fromARGB(255, 0, 0, 0)),
                                 ),
                                 // /#RT=user_id,modes_id$
                                 Icon(Icons.settings)

@@ -18,6 +18,7 @@ DataUser? _dataUser;
 TextEditingController? _passwordController;
 
 class _EditPasswordState extends State<EditPassword> {
+  final Color primaryColors = Color.fromARGB(255, 0, 140, 255);
   bool showPassworddefault = true;
   bool showPasswordnew = true;
   bool showPasswordconfrim = true;
@@ -202,7 +203,7 @@ class _EditPasswordState extends State<EditPassword> {
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.green,
+                color: primaryColors,
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -394,7 +395,7 @@ class _EditPasswordState extends State<EditPassword> {
                               : () {
                                   print('noedit');
                                 },
-                          color: Colors.green,
+                          color: primaryColors,
                           padding: EdgeInsets.symmetric(horizontal: 50),
                           elevation: 2,
                           shape: RoundedRectangleBorder(

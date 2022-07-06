@@ -4,12 +4,12 @@
 
 import 'dart:convert';
 
-ChartDayModel chartDayModelFromJson(String str) => ChartDayModel.fromJson(json.decode(str));
+ChartRangeModel chartRangeModelFromJson(String str) => ChartRangeModel.fromJson(json.decode(str));
 
-String chartDayModelToJson(ChartDayModel data) => json.encode(data.toJson());
+String chartRangeModelToJson(ChartRangeModel data) => json.encode(data.toJson());
 
-class ChartDayModel {
-  ChartDayModel({
+class ChartRangeModel {
+  ChartRangeModel({
     required this.err,
     required this.status,
     required this.message,
@@ -19,7 +19,7 @@ class ChartDayModel {
   bool status;
   List<Message> message;
 
-  factory ChartDayModel.fromJson(Map<String, dynamic> json) => ChartDayModel(
+  factory ChartRangeModel.fromJson(Map<String, dynamic> json) => ChartRangeModel(
         err: json["err"],
         status: json["status"],
         message: List<Message>.from(json["message"].map((x) => Message.fromJson(x))),

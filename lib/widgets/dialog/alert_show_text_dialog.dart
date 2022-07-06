@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DialogAlert {
-  DialogAlert._();
+class DialogAlertText {
+  DialogAlertText._();
   static void show(
     BuildContext context, {
     Function? onTap,
@@ -42,7 +42,7 @@ class DialogAlert {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  height: MediaQuery.of(context).size.height * 0.6,
                   decoration: BoxDecoration(
                     image: DecorationImage(
                       fit: BoxFit.fitHeight,
@@ -52,6 +52,10 @@ class DialogAlert {
                 ),
                 const SizedBox(
                   height: 10,
+                ),
+                Text(
+                  message ?? 'asdfasdfasdfsdf',
+                  style: TextStyle(fontSize: 24, color: Colors.white, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

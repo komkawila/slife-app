@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_contron/screens/accout/accout.dart';
 import 'package:flutter_contron/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter_contron/screens/log/log_screen.dart';
-import 'package:flutter_contron/screens/login/login_screen.dart';
 import 'package:flutter_contron/screens/mode/mode_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,15 +35,15 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: CurvedNavigationBar(
-          color: Colors.green,
+          color: Color.fromARGB(255, 0, 140, 255),
           // backgroundColor: Colors.brown[900]!,
-          backgroundColor: Color(0xFF0000),
-          buttonBackgroundColor: Colors.green,
+          backgroundColor: const Color(0xFF0000),
+          buttonBackgroundColor: Color.fromARGB(255, 0, 140, 255),
           height: 50,
-          animationDuration: Duration(milliseconds: 300),
+          animationDuration: const Duration(milliseconds: 300),
           index: _currentIndex,
           onTap: onTabTapped,
-          items: [
+          items: const [
             Icon(
               Icons.home,
               size: 30,

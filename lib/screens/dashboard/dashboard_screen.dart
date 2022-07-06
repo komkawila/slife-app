@@ -7,6 +7,7 @@ import 'package:flutter_contron/models/dataMax.dart';
 import 'package:flutter_contron/models/datasocketio.dart';
 import 'package:flutter_contron/models/user/datastateuser.dart';
 import 'package:flutter_contron/widgets/dialog/alert_show_dalog.dart';
+import 'package:flutter_contron/widgets/dialog/alert_show_text_dialog.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -26,6 +27,7 @@ class DashBoard extends StatefulWidget {
 }
 
 class _DashBoardState extends State<DashBoard> {
+  final Color primaryColors = Color.fromARGB(255, 0, 140, 255);
   bool status = false;
   bool statusMode = false;
   String? _homeIcon;
@@ -46,7 +48,7 @@ class _DashBoardState extends State<DashBoard> {
   bool sleepmode = false;
   bool nightmode = false;
   bool logomode = false;
-
+  bool savingcheck = false;
 //https://apisocketio.komkawila.com/
   String? _setImage() {
     if (value < 30) {
@@ -125,7 +127,8 @@ class _DashBoardState extends State<DashBoard> {
 //192.168.1.112
   @override
   void dispose() {
-    socket!.disconnect(); // --> disconnects the Socket.IO client once the screen is disposed
+    socket!
+        .disconnect(); // --> disconnects the Socket.IO client once the screen is disposed
     super.dispose();
     _timer?.cancel();
   }
@@ -183,7 +186,8 @@ class _DashBoardState extends State<DashBoard> {
   }
 
   getMaxMode() async {
-    var res = await http.get(Uri.parse('https://sttslife-api.sttslife.co/config/id/${dataStateUser!.message[0].userModes}'));
+    var res = await http.get(Uri.parse(
+        'https://sttslife-api.sttslife.co/config/id/${dataStateUser!.message[0].userModes}'));
     var data = json.encode(res.body);
 
     if (res.statusCode == 200) {
@@ -200,8 +204,13 @@ class _DashBoardState extends State<DashBoard> {
 
   void initializeSocket() {
     print('initializeSocket');
-    socket =
-        io('http://dns.sttslife.co:4000/', OptionBuilder().setTransports(['websocket']).disableAutoConnect().setQuery({"roomId": iduser}).build());
+    socket = io(
+        'http://dns.sttslife.co:4000/',
+        OptionBuilder()
+            .setTransports(['websocket'])
+            .disableAutoConnect()
+            .setQuery({"roomId": iduser})
+            .build());
     socket!.connect(); //connect the Socket.IO Client to the Serverƒ
     //SOCKET EVENTS
     // --> listening for connection
@@ -220,7 +229,8 @@ class _DashBoardState extends State<DashBoard> {
         final str = data.toString();
         final commands = str.substring(str.indexOf(':') + 2, str.indexOf(','));
         final atcommands = commands.substring(0, commands.indexOf('='));
-        final values = commands.substring(commands.indexOf('=') + 1, commands.length);
+        final values =
+            commands.substring(commands.indexOf('=') + 1, commands.length);
         print(str);
         if (atcommands.indexOf('AT+TOGGLE') != -1) {
           print('############ AT+TOGGLE');
@@ -254,15 +264,25 @@ class _DashBoardState extends State<DashBoard> {
             getUserStatus();
           });
         } else if (atcommands.indexOf('AT+AIREMTRY') != -1) {
-          DialogAlert.show(context, images: 'assets/images/CH02B0.png', message: '');
+          DialogAlert.show(context,
+              images: 'assets/images/CH02B0.png', message: '');
           print('AIREMTRY');
         } else if (atcommands.indexOf('AT+AIROVER') != -1) {
           print('AIROVER');
-          DialogAlert.show(context, images: 'assets/images/CH03B0.png', message: '');
+          DialogAlert.show(context,
+              images: 'assets/images/CH03B0.png', message: '');
         } else if (atcommands.indexOf('AT+ECOMODE') != -1) {
           print('ECOMODE');
-          DialogAlert.show(context, images: 'assets/images/CH05B0.png', message: '');
+          DialogAlert.show(context,
+              images: 'assets/images/CH05B0.png', message: '');
         }
+        // else if ((data.toString()).indexOf('ALERT+TESTDATA') != -1) {
+        //   print('ECOMODE');
+
+        //   final values = data.substring(data.indexOf('=') + 1, data.length);
+        //   print(values);
+        //   DialogAlertText.show(context, images: 'assets/images/CH060.png', message: 'S-Life ทำงาน ${values} ครั้ง');
+        // }
 
         /*
 
@@ -272,14 +292,26 @@ class _DashBoardState extends State<DashBoard> {
         */
       }
       if ((data.toString()).indexOf('ALERT+AIREMTRY') != -1) {
-        DialogAlert.show(context, images: 'assets/images/CH02B0.png', message: '');
+        DialogAlert.show(context,
+            images: 'assets/images/CH02B0.png', message: '');
         print('AIREMTRY');
       } else if ((data.toString()).indexOf('ALERT+AIROVER') != -1) {
         print('AIROVER');
-        DialogAlert.show(context, images: 'assets/images/CH03B0.png', message: '');
+        DialogAlert.show(context,
+            images: 'assets/images/CH03B0.png', message: '');
       } else if ((data.toString()).indexOf('ALERT+ECOMODE') != -1) {
         print('ECOMODE');
-        DialogAlert.show(context, images: 'assets/images/CH05B0.png', message: '');
+        DialogAlert.show(context,
+            images: 'assets/images/CH05B0.png', message: '');
+      } else if ((data.toString()).indexOf('ALERT+TESTDATA') != -1) {
+        print('ECOMODE');
+        final values = data.substring(data.indexOf('=') + 1, data.length);
+        DialogAlertText.show(context,
+            images: 'assets/images/CH060.png',
+            message: 'S-Life ทำงาน ${values} ครั้ง');
+        setState(() {
+          savingcheck = false;
+        });
       }
 
       // print(_datasocket);
@@ -411,13 +443,17 @@ class _DashBoardState extends State<DashBoard> {
                           children: [
                             _datasocket?.temp == null
                                 ? SpinKitFadingCircle(
-                                    duration: const Duration(milliseconds: 2000),
-                                    color: Colors.green[400],
+                                    duration:
+                                        const Duration(milliseconds: 2000),
+                                    color: primaryColors,
                                     size: 40.0,
                                   )
                                 : OutlinedText(
                                     strokes: [
-                                      OutlinedTextStroke(width: 8, color: const Color.fromARGB(255, 83, 136, 180)),
+                                      OutlinedTextStroke(
+                                          width: 8,
+                                          color: const Color.fromARGB(
+                                              255, 83, 136, 180)),
                                     ],
                                     text: Text(
                                       '${_datasocket?.temp}',
@@ -511,12 +547,12 @@ class _DashBoardState extends State<DashBoard> {
                       borderRadius: BorderRadius.circular(100),
                       color: Color.fromARGB(212, 28, 33, 37),
                       border: Border.all(
-                        color: status ? Colors.green : Colors.red,
+                        color: status ? primaryColors : Colors.red,
                         width: 3,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: status ? Colors.green[300]! : Colors.red[300]!,
+                          color: status ? primaryColors : Colors.red[300]!,
                           blurRadius: 5,
                           spreadRadius: 1,
                         )
@@ -534,7 +570,7 @@ class _DashBoardState extends State<DashBoard> {
                       },
                       child: Icon(
                         Icons.power_settings_new,
-                        color: status ? Colors.green : Colors.red,
+                        color: status ? primaryColors : Colors.red,
                         size: 45,
                       ),
                     ), //,
@@ -548,7 +584,7 @@ class _DashBoardState extends State<DashBoard> {
                       Container(
                         decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.green,
+                              color: primaryColors,
                               width: 2,
                             ),
                             borderRadius: BorderRadius.circular(15)),
@@ -566,7 +602,7 @@ class _DashBoardState extends State<DashBoard> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: FlutterSwitch(
-                                activeColor: Colors.green,
+                                activeColor: primaryColors,
                                 toggleColor: Colors.white,
                                 width: MediaQuery.of(context).size.width / 3.5,
                                 height: 40.0,
@@ -579,9 +615,9 @@ class _DashBoardState extends State<DashBoard> {
                                 activeText: 'ON',
                                 inactiveText: 'OFF',
                                 inactiveColor: Colors.grey,
-                                activeIcon: const Icon(
+                                activeIcon: Icon(
                                   Icons.nightlight_round,
-                                  color: Colors.green,
+                                  color: primaryColors,
                                 ),
                                 // inactiveIcon: Icon(
                                 //   Icons.wb_sunny,
@@ -591,7 +627,8 @@ class _DashBoardState extends State<DashBoard> {
                                   setState(() {
                                     sleepmode = val;
                                     print("nightmode ===> $sleepmode");
-                                    sendMessage('AT+SLEEP=${sleepmode ? 1 : 0}');
+                                    sendMessage(
+                                        'AT+SLEEP=${sleepmode ? 1 : 0}');
                                   });
                                   sendSleepMode();
                                 },
@@ -602,12 +639,17 @@ class _DashBoardState extends State<DashBoard> {
                       ),
                       InkWell(
                         onTap: () {
-                          sendMessage('AT+TEST=1');
+                          print(_datasocket!.testsystem.toString());
+                          if (_datasocket!.testsystem.toString() == '0') {
+                            showAlertDialog(context);
+                          } else {
+                            showAlertDialogcancel(context);
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                color: Colors.green,
+                                color: savingcheck ? Colors.red : primaryColors,
                                 width: 2,
                               ),
                               borderRadius: BorderRadius.circular(15)),
@@ -638,7 +680,9 @@ class _DashBoardState extends State<DashBoard> {
                         ),
                       ),
                       Container(
-                        decoration: BoxDecoration(border: Border.all(color: Colors.green, width: 2), borderRadius: BorderRadius.circular(15)),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: primaryColors, width: 2),
+                            borderRadius: BorderRadius.circular(15)),
                         width: MediaQuery.of(context).size.width / 3.2,
                         height: 90,
                         child: Column(
@@ -653,7 +697,7 @@ class _DashBoardState extends State<DashBoard> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: FlutterSwitch(
-                                activeColor: Colors.green,
+                                activeColor: primaryColors,
                                 toggleColor: Colors.white,
                                 width: MediaQuery.of(context).size.width / 3.5,
                                 height: 40.0,
@@ -689,7 +733,9 @@ class _DashBoardState extends State<DashBoard> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Container(
-                  decoration: BoxDecoration(border: Border.all(color: Colors.green, width: 2), borderRadius: BorderRadius.circular(15)),
+                  decoration: BoxDecoration(
+                      border: Border.all(color: primaryColors, width: 2),
+                      borderRadius: BorderRadius.circular(15)),
                   child: dataMax?.message?[0].configPulsecount == null
                       ? SpinKitFadingCircle(
                           duration: Duration(milliseconds: 2000),
@@ -703,7 +749,8 @@ class _DashBoardState extends State<DashBoard> {
                             maximum: _maximum!,
                             interval: (_maximum! / 10.0),
                             animateAxis: true,
-                            axisTrackStyle: const LinearAxisTrackStyle(thickness: 24, color: Colors.green),
+                            axisTrackStyle: LinearAxisTrackStyle(
+                                thickness: 24, color: primaryColors),
                             orientation: LinearGaugeOrientation.horizontal,
                             markerPointers: [
                               LinearWidgetPointer(
@@ -714,9 +761,15 @@ class _DashBoardState extends State<DashBoard> {
                                   });
                                 },
                                 onChangeEnd: (valueslide) async {
-                                  sendMessage('AT+PULSE=${valueslide.toStringAsFixed(0)}');
-                                  var res = await http.put(Uri.parse('https://sttslife-api.sttslife.co/users/pulse/${iduser}'),
-                                      body: {'user_pulseset': valueslide.toStringAsFixed(0)});
+                                  sendMessage(
+                                      'AT+PULSE=${valueslide.toStringAsFixed(0)}');
+                                  var res = await http.put(
+                                      Uri.parse(
+                                          'https://sttslife-api.sttslife.co/users/pulse/${iduser}'),
+                                      body: {
+                                        'user_pulseset':
+                                            valueslide.toStringAsFixed(0)
+                                      });
                                   if (res.statusCode == 200) {
                                     print('put valueSlide Success');
                                   } else {
@@ -724,19 +777,26 @@ class _DashBoardState extends State<DashBoard> {
                                   }
                                 },
                                 child: Container(
-                                  width: MediaQuery.of(context).size.height * 0.05,
-                                  height: MediaQuery.of(context).size.height * 0.08,
-                                  decoration: BoxDecoration(shape: BoxShape.circle),
+                                  width:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  decoration:
+                                      BoxDecoration(shape: BoxShape.circle),
                                   child: Center(
                                     child: Column(
                                       children: [
                                         OutlinedText(
                                           strokes: [
-                                            OutlinedTextStroke(color: Colors.green, width: 3),
+                                            OutlinedTextStroke(
+                                                color: primaryColors, width: 3),
                                           ],
                                           text: Text(
                                             _valueSlide!.toStringAsFixed(0),
-                                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white),
                                           ),
                                         ),
                                         Icon(
@@ -765,7 +825,9 @@ class _DashBoardState extends State<DashBoard> {
                       height: 90,
                       width: MediaQuery.of(context).size.width / 3,
                       child: Card(
-                        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.green, width: 2), borderRadius: BorderRadius.circular(20.0)),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: primaryColors, width: 2),
+                            borderRadius: BorderRadius.circular(20.0)),
                         elevation: 4,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -773,7 +835,8 @@ class _DashBoardState extends State<DashBoard> {
                           children: [
                             Text(
                               'Count Yellow',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             _datasocket?.countyellow == null
                                 ? SpinKitFadingCircle(
@@ -783,7 +846,10 @@ class _DashBoardState extends State<DashBoard> {
                                   )
                                 : Text(
                                     '${_datasocket?.countyellow}',
-                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green[400]),
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColors),
                                   )
                           ],
                         ),
@@ -793,7 +859,9 @@ class _DashBoardState extends State<DashBoard> {
                       height: 90,
                       width: MediaQuery.of(context).size.width / 3,
                       child: Card(
-                        shape: RoundedRectangleBorder(side: BorderSide(color: Colors.green, width: 2), borderRadius: BorderRadius.circular(20.0)),
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: primaryColors, width: 2),
+                            borderRadius: BorderRadius.circular(20.0)),
                         elevation: 4,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -801,7 +869,8 @@ class _DashBoardState extends State<DashBoard> {
                           children: [
                             Text(
                               'Count Red',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             _datasocket?.countred == null
                                 ? SpinKitFadingCircle(
@@ -811,7 +880,10 @@ class _DashBoardState extends State<DashBoard> {
                                   )
                                 : Text(
                                     '${_datasocket?.countred}',
-                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green[400]),
+                                    style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: primaryColors),
                                   )
                           ],
                         ),
@@ -853,5 +925,86 @@ class _DashBoardState extends State<DashBoard> {
             ],
           );
         });
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("ยกเลิก"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("ยืนยัน"),
+      onPressed: () async {
+        // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+        // sharedPreferences.remove('test_image');
+        // sharedPreferences.remove('userId');
+        // sharedPreferences.remove('user_modes');
+        // sharedPreferences.setInt('appStep', 2);
+        // Navigator.pushReplacementNamed(context, '/login');
+        // // loginUser(userData);
+        // print('logout');
+        await sendMessage('AT+TEST=1');
+        setState(() {
+          savingcheck = true;
+        });
+        Navigator.pop(context);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("ต้องการทดสอบระบบใช่หรือไม่"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  showAlertDialogcancel(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("ยกเลิก"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("ยืนยัน"),
+      onPressed: () async {
+        await sendMessage('AT+TEST=0');
+        setState(() {
+          savingcheck = false;
+        });
+        Navigator.pop(context);
+      },
+    );
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+        "ต้องการยกเลิก\nการทดสอบระบบใช่หรือไม่",
+        textAlign: TextAlign.center,
+      ),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }
